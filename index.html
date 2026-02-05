@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datamites - 3D Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* Particle Canvas */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hero Section with 3D Effect */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .hero-title {
+            font-size: 8em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00f5ff 0%, #a855f7 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: float 6s ease-in-out infinite;
+            text-shadow: 0 0 80px rgba(0, 245, 255, 0.5);
+            letter-spacing: -3px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateX(0deg); }
+            50% { transform: translateY(-20px) rotateX(5deg); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.8em;
+            color: #a0a0a0;
+            margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .hero-cta {
+            background: linear-gradient(135deg, #00f5ff 0%, #a855f7 100%);
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-radius: 50px;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 245, 255, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 40px rgba(0, 245, 255, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 60px rgba(0, 245, 255, 0.6); }
+        }
+
+        .hero-cta:hover {
+            transform: scale(1.1);
+            box-shadow: 0 20px 80px rgba(0, 245, 255, 0.8);
+        }
+
+        /* Journey Cards with 3D Transform */
+        .journey-section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            font-size: 4em;
+            text-align: center;
+            margin-bottom: 80px;
+            background: linear-gradient(135deg, #00f5ff 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .journey-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            perspective: 1000px;
+        }
+
+        .journey-card {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border: 2px solid rgba(0, 245, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .journey-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 245, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .journey-card:hover::before {
+            opacity: 1;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .journey-card:hover {
+            transform: translateY(-20px) rotateX(5deg) rotateY(5deg);
+            border-color: rgba(0, 245, 255, 0.8);
+            box-shadow: 0 30px 80px rgba(0, 245, 255, 0.3);
+        }
+
+        .card-number {
+            font-size: 5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00f5ff 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.3;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .card-title {
+            font-size: 2em;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #00f5ff;
+        }
+
+        .card-content {
+            color: #b0b0b0;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+
+        .card-highlight {
+            background: rgba(0, 245, 255, 0.1);
+            border-left: 3px solid #00f5ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .stat-item {
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: 5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00f5ff 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: countUp 2s ease-out forwards;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            color: #808080;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+
+        /* Timeline with 3D depth */
+        .timeline-section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #00f5ff 0%, #a855f7 50%, #ec4899 100%);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 60px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border: 2px solid rgba(0, 245, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.5s ease;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.05);
+            border-color: rgba(0, 245, 255, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 245, 255, 0.3);
+        }
+
+        .timeline-dot {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #00f5ff 0%, #a855f7 100%);
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.8);
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.3); }
+        }
+
+        .timeline-month {
+            font-size: 0.9em;
+            color: #00f5ff;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .timeline-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .timeline-description {
+            color: #b0b0b0;
+            line-height: 1.6;
+        }
+
+        /* Pricing Cards with Holographic Effect */
+        .pricing-section {
+            padding: 100px 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border: 2px solid rgba(0, 245, 255, 0.2);
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 245, 255, 0.3), transparent);
+            animation: holographic 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes holographic {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-20px);
+            border-color: rgba(0, 245, 255, 1);
+            box-shadow: 0 30px 80px rgba(0, 245, 255, 0.5);
+        }
+
+        .pricing-badge {
+            background: linear-gradient(135deg, #00f5ff 0%, #a855f7 100%);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .pricing-title {
+            font-size: 2em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .pricing-amount {
+            font-size: 4em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00f5ff 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
+        }
+
+        .pricing-original {
+            font-size: 0.4em;
+            text-decoration: line-through;
+            color: #606060;
+            display: block;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(0, 245, 255, 0.05);
+            border-radius: 10px;
+            color: #b0b0b0;
+            border-left: 3px solid #00f5ff;
+        }
+
+        .pricing-btn {
+            background: linear-gradient(135deg, #00f5ff 0%, #a855f7 100%);
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 50px;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .pricing-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(0, 245, 255, 0.6);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 150px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-title {
+            font-size: 5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00f5ff 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 40px;
+            line-height: 1.2;
+        }
+
+        .cta-subtitle {
+            font-size: 1.5em;
+            color: #808080;
+            margin-bottom: 50px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn-primary {
+            background: linear-gradient(135deg, #00f5ff 0%, #a855f7 100%);
+            border: none;
+            padding: 25px 60px;
+            font-size: 1.3em;
+            font-weight: 600;
+            border-radius: 50px;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 50px rgba(0, 245, 255, 0.4);
+        }
+
+        .cta-btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 245, 255, 0.6);
+        }
+
+        .cta-btn-secondary {
+            background: transparent;
+            border: 2px solid #00f5ff;
+            padding: 25px 60px;
+            font-size: 1.3em;
+            font-weight: 600;
+            border-radius: 50px;
+            color: #00f5ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn-secondary:hover {
+            background: rgba(0, 245, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 50px;
+            border: 2px solid #00f5ff;
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            padding-top: 10px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .scroll-indicator::before {
+            content: '';
+            width: 6px;
+            height: 10px;
+            background: #00f5ff;
+            border-radius: 3px;
+            animation: scroll 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        @keyframes scroll {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(15px); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 2px solid rgba(0, 245, 255, 0.3);
+            border-radius: 30px;
+            padding: 60px;
+            max-width: 800px;
+            position: relative;
+            animation: modalSlideIn 0.5s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #00f5ff;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+            color: #ec4899;
+        }
+
+        .modal-title {
+            font-size: 3em;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00f5ff 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-text {
+            color: #b0b0b0;
+            line-height: 1.8;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 5em; }
+            .section-title { font-size: 3em; }
+            .journey-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .timeline::before { left: 20px; }
+            .timeline-item { flex-direction: row !important; }
+            .timeline-content { width: calc(100% - 80px); margin-left: 60px; }
+            .timeline-dot { left: 20px; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3em; }
+            .hero-subtitle { font-size: 1.2em; }
+            .cta-title { font-size: 2.5em; }
+            .modal-content { padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <canvas id="particles"></canvas>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 class="hero-title">DATAMITES</h1>
+            <p class="hero-subtitle">REDEFINE YOUR FUTURE IN DATA SCIENCE</p>
+            <button class="hero-cta" onclick="scrollToSection('journey')">BEGIN YOUR JOURNEY</button>
+            <div class="scroll-indicator"></div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <h2 class="section-title">The Numbers Speak</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="8">0</div>
+                    <div class="stat-label">Months Program</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="2500">0</div>
+                    <div class="stat-label">Hiring Partners</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="12">0</div>
+                    <div class="stat-label">Live Projects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="100">0</div>
+                    <div class="stat-label">Placement Rate</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Journey Section -->
+        <section class="journey-section" id="journey">
+            <h2 class="section-title">Your Transformation Path</h2>
+            <div class="journey-grid">
+                <div class="journey-card" onclick="openModal('phase1')">
+                    <div class="card-number">01</div>
+                    <h3 class="card-title">Foundation Phase</h3>
+                    <p class="card-content">Master the fundamentals with our intensive 4-month training program. 8 hours theory + 12 hours practical sessions weekly.</p>
+                    <div class="card-highlight">
+                        <p>✓ Zero to Advanced Learning</p>
+                        <p>✓ IABAC Certified Syllabus</p>
+                        <p>✓ Industry Expert Trainers</p>
+                    </div>
+                </div>
+
+                <div class="journey-card" onclick="openModal('phase2')">
+                    <div class="card-number">02</div>
+                    <h3 class="card-title">Project Mastery</h3>
+                    <p class="card-content">Build your professional portfolio with 12+ capstone projects and 2 live projects with Rubixe AI Company.</p>
+                    <div class="card-highlight">
+                        <p>✓ Real-World Experience</p>
+                        <p>✓ 8-Month Internship Letter</p>
+                        <p>✓ Portfolio Development</p>
+                    </div>
+                </div>
+
+                <div class="journey-card" onclick="openModal('placement')">
+                    <div class="card-number">03</div>
+                    <h3 class="card-title">Career Launch</h3>
+                    <p class="card-content">Get placed with our comprehensive support system connected to 2,500+ hiring partners across India.</p>
+                    <div class="card-highlight">
+                        <p>✓ Resume Optimization</p>
+                        <p>✓ Mock Interviews</p>
+                        <p>✓ Unlimited Interview Calls</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="timeline-section">
+            <h2 class="section-title">8-Month Roadmap</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-month">MONTH 1-4</div>
+                        <h3 class="timeline-title">Theory & Practical Training</h3>
+                        <p class="timeline-description">Intensive learning phase with 8 hours theory and 12 hours hands-on practice per week. Build strong fundamentals in data science tools and techniques.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-month">MONTH 5</div>
+                        <h3 class="timeline-title">Project Phase Begins</h3>
+                        <p class="timeline-description">Start building your project portfolio. Placement team begins resume building and LinkedIn optimization. Mock interviews commence.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-month">MONTH 6</div>
+                        <h3 class="timeline-title">Interview Scheduling</h3>
+                        <p class="timeline-description">Complete 3-4 major projects. Your resume is distributed to 2,500+ hiring partners. Interview scheduling begins.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-month">MONTH 7-8</div>
+                        <h3 class="timeline-title">Career Placement</h3>
+                        <p class="timeline-description">Final projects completion. Unlimited interview support until placement. Receive 8-month internship certificate from Rubixe AI.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="pricing-section">
+            <h2 class="section-title">Investment Options</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-badge">MOST POPULAR</div>
+                    <h3 class="pricing-title">Classroom Training</h3>
+                    <div class="pricing-amount">
+                        <span class="pricing-original">₹64,451</span>
+                        ₹44,999
+                    </div>
+                    <ul class="pricing-features">
+                        <li>In-Person Expert Training</li>
+                        <li>Hands-On Lab Sessions</li>
+                        <li>24×7 Cloud Lab Access</li>
+                        <li>Study Materials Included</li>
+                        <li>IABAC Certification</li>
+                        <li>Lifetime LMS Access</li>
+                        <li>Placement Support</li>
+                        <li>Zero% EMI Available</li>
+                    </ul>
+                    <button class="pricing-btn" onclick="openModal('enroll')">ENROLL NOW</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-badge">FLEXIBLE LEARNING</div>
+                    <h3 class="pricing-title">Online Training</h3>
+                    <div class="pricing-amount">
+                        <span class="pricing-original">₹59,951</span>
+                        ₹41,099
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Live Virtual Classes</li>
+                        <li>Interactive Sessions</li>
+                        <li>24×7 Cloud Lab Access</li>
+                        <li>Digital Study Materials</li>
+                        <li>IABAC Certification</li>
+                        <li>Lifetime LMS Access</li>
+                        <li>Placement Support</li>
+                        <li>Zero% EMI Available</li>
+                    </ul>
+                    <button class="pricing-btn" onclick="openModal('enroll')">ENROLL NOW</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2 class="cta-title">Ready to Transform<br>Your Career?</h2>
+            <p class="cta-subtitle">Join thousands of successful data science professionals</p>
+            <div class="cta-buttons">
+                <button class="cta-btn-primary" onclick="openModal('enroll')">START YOUR JOURNEY</button>
+                <button class="cta-btn-secondary" onclick="openModal('syllabus')">DOWNLOAD SYLLABUS</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <h2 class="modal-title" id="modal-title">Title</h2>
+            <p class="modal-text" id="modal-text">Content</p>
+            <div id="modal-actions"></div>
+        </div>
+    </div>
+
+    <script>
+        // Particle Animation
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 100;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 245, 255, 0.5)' : 'rgba(168, 85, 247, 0.5)';
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            // Draw connections
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 245, 255, ${0.2 - distance / 500})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Smooth Scroll
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Counter Animation
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('.stat-number');
+                    counters.forEach(counter => {
+                        const target = +counter.getAttribute('data-target');
+                        const increment = target / 100;
+                        let current = 0;
+
+                        const updateCounter = () => {
+                            if (current < target) {
+                                current += increment;
+                                counter.textContent = Math.ceil(current) + (counter.parentElement.querySelector('.stat-label').textContent.includes('Rate') ? '%' : '+');
+                                setTimeout(updateCounter, 20);
+                            } else {
+                                counter.textContent = target + (counter.parentElement.querySelector('.stat-label').textContent.includes('Rate') ? '%' : '+');
+                            }
+                        };
+
+                        updateCounter();
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        observer.observe(document.querySelector('.stats-section'));
+
+        // Modal Functions
+        const modalContent = {
+            phase1: {
+                title: 'Foundation Phase',
+                text: 'Our intensive 4-month foundation phase builds your data science skills from ground zero to advanced level. With 8 hours of theory and 12 hours of practical sessions per week, you\'ll master Python, Machine Learning, Deep Learning, and more. Our IABAC-certified curriculum ensures you learn industry-relevant skills taught by expert practitioners.'
+            },
+            phase2: {
+                title: 'Project Mastery',
+                text: 'Transform theory into practice with 12+ capstone projects and 2 live projects in partnership with Rubixe AI Company. Each project showcases different tools and approaches, building a diverse portfolio that proves your capabilities to potential employers. You\'ll also receive an 8-month internship letter, giving you the professional credentials that companies value.'
+            },
+            placement: {
+                title: 'Career Launch Support',
+                text: 'From Month 5, our dedicated Placement Assessment Team works with you on resume building, LinkedIn optimization, and mock interviews. Your profile reaches 2,500+ hiring partners across India. We provide unlimited interview opportunities until you secure your ideal position. Our goal: place you within 8 months of program start.'
+            },
+            enroll: {
+                title: 'Enroll Now',
+                text: 'Ready to start your data science journey? We offer flexible payment options including Zero% EMI. Pay ₹5,000 to secure your seat, or speak with our Relationship Manager to discuss the best option for you.'
+            },
+            syllabus: {
+                title: 'Download Syllabus',
+                text: 'Get the complete course syllabus covering all topics, tools, and technologies. Our IABAC-certified curriculum takes you from basics to advanced concepts in data science, machine learning, and AI.'
+            }
+        };
+
+        function openModal(type) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const text = document.getElementById('modal-text');
+            const actions = document.getElementById('modal-actions');
+
+            title.textContent = modalContent[type].title;
+            text.textContent = modalContent[type].text;
+
+            if (type === 'enroll') {
+                actions.innerHTML = `
+                    <button class="pricing-btn" onclick="alert('Redirecting to payment...')">Pay ₹5,000 Now</button>
+                    <button class="pricing-btn" style="background: transparent; border: 2px solid #00f5ff; color: #00f5ff; margin-top: 10px;" onclick="alert('Connecting you with our team...')">Talk to Relationship Manager</button>
+                `;
+            } else if (type === 'syllabus') {
+                actions.innerHTML = `
+                    <a href="/mnt/user-data/uploads/Datamites__1_.pdf" download class="pricing-btn">Download PDF</a>
+                `;
+            } else {
+                actions.innerHTML = '';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+
+        // 3D Card Effect
+        document.querySelectorAll('.journey-card, .pricing-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-20px)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+            });
+        });
+    </script>
+</body>
+</html>
